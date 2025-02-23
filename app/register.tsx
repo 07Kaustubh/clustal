@@ -1,123 +1,150 @@
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, ScrollView, View, TouchableOpacity, TouchableHighlight, Linking } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const GettingStarted = () => {
-  const [expandedSection, setExpandedSection] = useState(null);
-  const router = useRouter();
+const Register = () => {
+  const [name, setName] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [email, setEmail] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false); // Boolean to track OTP state
+  const [isOtpSubmitted, setIsOtpSubmitted] = useState(false); // Boolean to track OTP submission state
+  const [gymId, setGymId] = useState('');
+  const [referralCode, setReferralCode] = useState('');
 
-  const toggleSection = (section: any) => {
-    setExpandedSection(prevState => prevState === section ? null : section);
+  const handleGetOtp = () => {
+    // Assuming OTP is sent after this function is triggered
+    setIsOtpSent(true);
   };
 
-  const openLink = () => {
-    Linking.openURL('https://www.strongerbyscience.com/goal-setting/');
+  const handleSubmitOtp = () => {
+    // When OTP is submitted, show gym ID and referral code form
+    setIsOtpSubmitted(true);
   };
 
-  const navigateToDiet = () => {
-    router.push('/(add-info)/diet');
-  };
-
-  const navigateToActivity = () => {
-    router.push('/(add-info)/activity');
+  const handleContinue = () => {
+    // Handle continue button logic after gym ID and referral code
+    console.log('Gym ID:', gymId);
+    console.log('Referral Code:', referralCode);
   };
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={['left', 'right']}>
-        <ImageBackground source={require('../assets/images/auth.png')} resizeMode="cover" style={styles.image}>
-          <ScrollView style={styles.scrollView}>
-            <Text style={styles.heading}>Before You Begin</Text>
-            <Text style={styles.text}>
-              Bettering your physical fitness can feel daunting, especially if it's a completely new experience. It's important to lay some groundwork so your mindset is in the right place as you pursue your fitness goals.
-            </Text>
+      <LinearGradient
+        // Background Linear Gradient
+        colors={['#171A26', '#0F1014', '#0A0D18', '#141823', '#1A1A1D' ]}
+        style={styles.background}
+      />
+        <ImageBackground source={require('@/assets/images/auth.png')} resizeMode="cover" style={styles.image}>
+          <View style={styles.upperSpace} />
 
-            <TouchableHighlight onPress={() => toggleSection('startSmall')} style={styles.toggleButton}>
-              <View style={styles.toggleContent}>
-                <Text style={styles.subheading}>It’s OK to Start Small</Text>
-                <Ionicons name={expandedSection === 'startSmall' ? 'chevron-up' : 'chevron-down'} size={18} color="white" />
+          <View style={styles.formContainer}>
+            {!isOtpSent ? (
+              <>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Name"
+                  placeholderTextColor="white"
+                  value={name}
+                  onChangeText={setName}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Mobile Number"
+                  placeholderTextColor="white"
+                  keyboardType="phone-pad"
+                  value={mobileNumber}
+                  onChangeText={setMobileNumber}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email Address"
+                  placeholderTextColor="white"
+                  keyboardType="email-address"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <TouchableOpacity style={styles.button} onPress={handleGetOtp}>
+                  <Text style={styles.buttonText}>Get OTP</Text>
+                </TouchableOpacity>
+              </>
+            ) : !isOtpSubmitted ? (
+              <View style={styles.otpContainer}>
+                <View style={styles.mobileNumberContainer}>
+                  <Text style={styles.label}>Mobile Number:</Text>
+                  <Text style={styles.mobileNumber}>{mobileNumber}</Text>
+                </View>
+                <TouchableOpacity style={styles.editButton}>
+                  <Text style={styles.editButtonText}>Edit</Text>
+                </TouchableOpacity>
+
+                {/* OTP Input Section */}
+                <View style={styles.otpInputContainer}>
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                  <TextInput
+                    style={styles.otpInput}
+                    keyboardType="numeric"
+                    maxLength={1}
+                  />
+                </View>
+
+                {/* Resend OTP Button */}
+                <TouchableOpacity style={styles.resendButton}>
+                  <Text style={styles.resendButtonText}>Resend OTP</Text>
+                </TouchableOpacity>
+
+                {/* Submit OTP Button */}
+                <TouchableOpacity style={styles.submitButton} onPress={handleSubmitOtp}>
+                  <Text style={styles.submitButtonText}>Submit OTP</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableHighlight>
-
-            {expandedSection === 'startSmall' && (
-              <Text style={styles.text}>
-                Consistency over time is key. People often try to do too much at once and get overwhelmed. The key is to start small and build up gradually.
-              </Text>
-            )}
-
-            <TouchableHighlight onPress={() => toggleSection('changeTime')} style={styles.toggleButton}>
-              <View style={styles.toggleContent}>
-                <Text style={styles.subheading}>Change Takes Time, You Must Be Patient</Text>
-                <Ionicons name={expandedSection === 'changeTime' ? 'chevron-up' : 'chevron-down'} size={18} color="white" />
+            ) : (
+              // Render Gym ID and Referral Code form
+              <View style={styles.gymReferralFormContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Registered Gym ID"
+                  placeholderTextColor="white"
+                  value={gymId}
+                  onChangeText={setGymId}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Referral Code"
+                  placeholderTextColor="white"
+                  value={referralCode}
+                  onChangeText={setReferralCode}
+                />
+                <TouchableOpacity style={styles.button} onPress={handleContinue}>
+                  <Text style={styles.buttonText}>Continue</Text>
+                </TouchableOpacity>
               </View>
-            </TouchableHighlight>
-
-            {expandedSection === 'changeTime' && (
-              <Text style={styles.text}>
-                Beginners often expect quick results and get discouraged when they don't see them. Be patient, and remember how long it took to get out of shape.
-              </Text>
             )}
-
-            <TouchableHighlight onPress={() => toggleSection('simpleComponents')} style={styles.toggleButton}>
-              <View style={styles.toggleContent}>
-                <Text style={styles.subheading}>Fitness Goals Are Made of Simple Components</Text>
-                <Ionicons name={expandedSection === 'simpleComponents' ? 'chevron-up' : 'chevron-down'} size={18} color="white" />
-              </View>
-            </TouchableHighlight>
-
-            {expandedSection === 'simpleComponents' && (
-              <Text style={styles.text}>
-                Most fitness goals can be broken down into a few simple concepts:
-                <Text style={styles.bulletPoint}>• Losing some amount of fat</Text>
-                <Text style={styles.bulletPoint}>• Gaining some amount of muscle</Text>
-                <Text style={styles.bulletPoint}>• Doing strength/resistance training</Text>
-                <Text style={styles.bulletPoint}>• Doing cardio/conditioning work</Text>
-                <Text style={styles.bulletPoint}>• Improving specific movement patterns</Text>
-              </Text>
-            )}
-
-            <TouchableHighlight onPress={() => toggleSection('majoringMinors')} style={styles.toggleButton}>
-              <View style={styles.toggleContent}>
-                <Text style={styles.subheading}>Avoid Majoring in the Minors</Text>
-                <Ionicons name={expandedSection === 'majoringMinors' ? 'chevron-up' : 'chevron-down'} size={18} color="white" />
-              </View>
-            </TouchableHighlight>
-
-            {expandedSection === 'majoringMinors' && (
-              <Text style={styles.text}>
-                Focus on these key factors to achieve your fitness goals:
-                <Text style={styles.bulletPoint}>• Appropriate training intensity</Text>
-                <Text style={styles.bulletPoint}>• Progression in training</Text>
-                <Text style={styles.bulletPoint}>• Proper calories and protein intake</Text>
-                <Text style={styles.bulletPoint}>• Enough rest and recovery</Text>
-                <Text style={styles.bulletPoint}>• Consistency</Text>
-              </Text>
-            )}
-
-            <TouchableHighlight onPress={() => toggleSection('goalSetting')} style={styles.toggleButton}>
-              <View style={styles.toggleContent}>
-                <Text style={styles.subheading}>Goal Setting and Habit Formation</Text>
-                <Ionicons name={expandedSection === 'goalSetting' ? 'chevron-up' : 'chevron-down'} size={18} color="white" />
-              </View>
-            </TouchableHighlight>
-
-            {expandedSection === 'goalSetting' && (
-              <Text style={styles.text}>
-                Reading about goal setting will help you succeed. We recommend:
-                <Text style={styles.link} onPress={openLink}> Stronger By Science – An Evidence-Based Approach To Goal Setting</Text>
-              </Text>
-            )}
-          </ScrollView>
-
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={navigateToDiet}>
-              <Text style={styles.buttonText}>Improving Your Diet</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={navigateToActivity}>
-              <Text style={styles.buttonText}>Adding Physical Activity</Text>
-            </TouchableOpacity>
           </View>
         </ImageBackground>
       </SafeAreaView>
@@ -125,78 +152,138 @@ const GettingStarted = () => {
   );
 };
 
+export default Register;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#333', // Dark gray background for the page
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: '100%',
   },
   image: {
     flex: 1,
-    justifyContent: 'flex-start',
-    padding: 20,
-    backgroundColor: '#4e4e4e', // Slightly lighter gray to contrast with dark text
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '66%',
   },
-  scrollView: {
-    marginBottom: 60,
+  upperSpace: {
+    flex: 1,
   },
-  heading: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: 'white', // Light text on dark background
+  formContainer: {
+    width: '80%',
+    paddingVertical: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 0.5,
+  },
+  input: {
+    width: '100%',
+    height: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 25,
     marginBottom: 20,
-    textAlign: 'center',
-  },
-  subheading: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: 'white', // Lighter text for subheadings
-    marginVertical: 12,
-  },
-  text: {
+    paddingLeft: 15,
+    color: 'white',
     fontSize: 16,
-    color: 'white', // Light text to contrast the dark background
-    lineHeight: 22,
-    marginBottom: 14,
-  },
-  bulletPoint: {
-    fontSize: 16,
-    color: 'white', // Matching color for bullet points
-    lineHeight: 22,
-    marginLeft: 20,
-    marginBottom: 6,
-  },
-  link: {
-    color: '#4db8ff', // A light blue color for links to stand out
-    textDecorationLine: 'underline',
   },
   button: {
-    backgroundColor: '#006bb3', // Muted blue button to contrast with dark background
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 8,
-    marginBottom: 15,
+    width: '50%',
+    height: 45,
+    backgroundColor: '#FFB303',
+    justifyContent: 'center',
     alignItems: 'center',
-    elevation: 3,
+    borderRadius: 25,
   },
   buttonText: {
+    color: 'black',
     fontSize: 16,
-    color: 'white',
     fontWeight: 'bold',
   },
-  toggleButton: {
-    marginVertical: 10,
-    paddingVertical: 14,
-    backgroundColor: '#666', // Medium gray for toggle buttons
-    borderRadius: 8,
+  otpContainer: {
+    width: '80%',
+    paddingVertical: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 0.5,
   },
-  toggleContent: {
+  label: {
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  mobileNumberContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
   },
-  buttonContainer: {
-    marginBottom: 25,
+  mobileNumber: {
+    color: 'white',
+    fontSize: 16,
+  },
+  otpInputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 20,
+  },
+  otpInput: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 10,
+    textAlign: 'center',
+    color: 'white',
+    fontSize: 24,
+    marginHorizontal: 1,
+  },
+  resendButton: {
+    backgroundColor: 'transparent',
+    marginBottom: 20,
+    alignSelf: 'flex-end',
+  },
+  resendButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  submitButton: {
+    width: '50%',
+    height: 45,
+    backgroundColor: '#FFB303',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 25,
+  },
+  submitButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  editButton: {
+    backgroundColor: 'transparent',
+    marginBottom: 20,
+    alignSelf: 'flex-end',
+  },
+  editButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  gymReferralFormContainer: {
+    width: '80%',
+    paddingVertical: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 0.5,
   },
 });
-
-export default GettingStarted;

@@ -8,10 +8,13 @@ export default function Index() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={['left', 'right']}>
         <ImageBackground source={require('../assets/images/home.png')} resizeMode='cover' style={styles.image}>
-          <Text style={styles.text}>Clustal IT Fitness Guide</Text>
+          <Text style={styles.text}>XYZ Fitness</Text>
           <View style={styles.buttonContainer}>
-            <Link href='/getting-started'  style={styles.signUpButton}>
-                  <Text style={styles.signUpText}>Getting Started</Text>
+            <Link href='/register'  style={styles.signUpButton}>
+                  <Text style={styles.signUpText}>Sign Up</Text>
+            </Link>
+            <Link href='/login' style={styles.signInButton}>
+                <Text style={styles.signInText}>Sign In</Text>
             </Link>
           </View>
         </ImageBackground>
@@ -55,6 +58,17 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: 'black',
+    textAlign: 'center',
+    fontSize: 26,
+    fontWeight: '900',
+  },
+  signInButton: {
+    paddingVertical: 15,
+    alignItems: 'center',
+    width: '50%',
+  },
+  signInText: {
+    color: 'white',
     textAlign: 'center',
     fontSize: 26,
     fontWeight: '900',
