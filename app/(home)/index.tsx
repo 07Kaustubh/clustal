@@ -9,7 +9,6 @@ import CheckInModal from './checkInModal';
 export default function App() {
   const router = useRouter();
   const [isCheckInModalVisible, setIsCheckInModalVisible] = useState(false);
-  
 
   const handleCheckinPress = () => {
     setIsCheckInModalVisible(true); // Show modal when check-in button is pressed
@@ -32,12 +31,25 @@ export default function App() {
     pagerRef.current?.setPage(page); // Programmatically change the page if pagerRef.current is not null
   };
 
+  // Navigate to user profile when profile picture is pressed
+  const handleProfilePress = () => {
+    router.push('./user-profile'); // Adjust this path based on your app's routing setup
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
         colors={['#171A26', '#0A0D18', '#1A1A1D']}
         style={styles.background}
       />
+
+      {/* Profile Picture in the top right */}
+      <TouchableOpacity onPress={handleProfilePress} style={styles.profileContainer}>
+        <Image
+          source={require('@/assets/images/profile-picture.png')} // Add your profile picture path here
+          style={styles.profileImage}
+        />
+      </TouchableOpacity>
 
       {/* Image Carousel in the upper half */}
       <View style={styles.carouselContainer}>
@@ -161,6 +173,17 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     height: '100%',
+  },
+  profileContainer: {
+    position: 'absolute',
+    top: 20, // Adjust top positioning based on preference
+    right: 20, // Position at the top right
+    zIndex: 10,
+  },
+  profileImage: {
+    width: 60, // Image width
+    height: 60, // Image height
+    borderRadius: 30, // Round the image
   },
   carouselContainer: {
     height: '66%', // Set height for the upper part of the screen (1)
@@ -296,4 +319,3 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
-
