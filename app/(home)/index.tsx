@@ -36,6 +36,10 @@ export default function App() {
     router.push('./user-profile'); // Adjust this path based on your app's routing setup
   };
 
+  const handleHistoryPress = () => {
+    router.push('./user-profile/accountHistory'); // Adjust this path based on your app's routing setup
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -124,7 +128,7 @@ export default function App() {
               <Text style={styles.buttonText}>Renew Plan</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.buttonMiddle]}>
-              <FontAwesome name="history" size={48} color="#FFB303" />
+              <FontAwesome name="history" size={48} color="#FFB303" onPress={handleHistoryPress} />
               <Text style={styles.buttonText}>Activity History</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.buttonLast]}>
