@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import API_BASE_URL from '@/config';
 
 const Login = () => {
+  const router = useRouter();
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -12,17 +16,44 @@ const Login = () => {
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false);
   const [gymId, setGymId] = useState('');
 
-  const handleGetOtp = () => {
-    setIsOtpSent(true); // OTP is sent after clicking Get OTP
+  const handleGetOtp = async () => {
+    if (!mobileNumber) {
+      Alert.alert("Error", "Please enter a mobile number.");
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_BASE_URL}/user/sendotp`, { mobilenumber: mobileNumber });
+      if (response.data) {
+        setIsOtpSent(true);
+        Alert.alert("Success", "OTP sent successfully!");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to send OTP.");
+      console.error(error);
+    }
   };
 
-  const handleSubmitOtp = () => {
-    setIsOtpSubmitted(true); // When OTP is submitted, proceed to gym ID screen
+  const handleSubmitOtp = async () => {
+    const otpValue = otp.join(''); // Convert OTP array to string
+    if (!otpValue || otpValue.length !== 6) {
+      Alert.alert("Error", "Please enter a valid 6-digit OTP.");
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_BASE_URL}/verifyotp`, { mobilenumber: mobileNumber, otp: otpValue });
+      if (response.data) {
+        await SecureStore.setItemAsync("accessToken", response.data.accessToken);
+        setIsOtpSubmitted(true);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Invalid OTP.");
+      console.error(error);
+    }
   };
 
   const handleContinue = () => {
     console.log('Gym ID:', gymId);
-    // Logic to proceed after gym ID submission
+    router.push('/(home)');
   };
 
   return (

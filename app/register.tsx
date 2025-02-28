@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import API_BASE_URL from '@/config';
+import * as SecureStore from 'expo-secure-store';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -11,22 +13,70 @@ const Register = () => {
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false); // Boolean to track OTP submission state
   const [gymId, setGymId] = useState('');
   const [referralCode, setReferralCode] = useState('');
+  const [otp, setOtp] = useState('');
 
-  const handleGetOtp = () => {
-    // Assuming OTP is sent after this function is triggered
-    setIsOtpSent(true);
+  const handleGetOtp = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/createuser`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, mobilenumber: mobileNumber }),
+      });
+
+      const data = await response.json();
+      if (data.status === "success") {
+        setIsOtpSent(true);
+        Alert.alert("Success", "OTP sent successfully!");
+      } else {
+        Alert.alert("Error", data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to send OTP");
+    }
   };
 
-  const handleSubmitOtp = () => {
-    // When OTP is submitted, show gym ID and referral code form
-    setIsOtpSubmitted(true);
+  const handleSubmitOtp = async () => {
+    if (!otp || otp.length !== 6) {
+      Alert.alert("Error", "Please enter a valid OTP");
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/verifyuser`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobilenumber: mobileNumber, otp }),
+      });
+
+      const data = await response.json();
+      if (data.status === "success") {
+        setIsOtpSubmitted(true);
+        await SecureStore.setItemAsync("authToken", data.data.accessToken);
+        Alert.alert("Success", "Registration successful!");
+      } else {
+        Alert.alert("Error", data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to verify OTP");
+    }
   };
 
   const handleContinue = () => {
     // Handle continue button logic after gym ID and referral code
+    if (!gymId || !referralCode) {
+      Alert.alert("Error", "Please enter both Gym ID and Referral Code");
+      return;
+    }
     console.log('Gym ID:', gymId);
     console.log('Referral Code:', referralCode);
   };
+
+  const handleResendOtp = () => {
+    setIsOtpSent(false); // Reset OTP sent state if needed
+    handleGetOtp(); // Re-send OTP
+  };
+  
 
   return (
     <SafeAreaProvider>
@@ -85,36 +135,48 @@ const Register = () => {
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[0]}
+                    onChangeText={(text) => setOtp((prev) => text + prev.slice(1))}
                   />
                   <TextInput
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[1]}
+                    onChangeText={(text) => setOtp(prev => prev.slice(0, 1) + text + prev.slice(2))}
                   />
                   <TextInput
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[2]}
+                    onChangeText={(text) => setOtp(prev => prev.slice(0, 2) + text + prev.slice(3))}
                   />
                   <TextInput
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[3]}
+                    onChangeText={(text) => setOtp(prev => prev.slice(0, 3) + text + prev.slice(4))}
                   />
                   <TextInput
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[4]}
+                    onChangeText={(text) => setOtp(prev => prev.slice(0, 4) + text + prev.slice(5))}
                   />
                   <TextInput
                     style={styles.otpInput}
                     keyboardType="numeric"
                     maxLength={1}
+                    value={otp[5]}
+                    onChangeText={(text) => setOtp(prev => prev.slice(0, 5) + text)}
                   />
                 </View>
 
                 {/* Resend OTP Button */}
-                <TouchableOpacity style={styles.resendButton}>
+                <TouchableOpacity style={styles.resendButton} onPress={handleResendOtp}>
                   <Text style={styles.resendButtonText}>Resend OTP</Text>
                 </TouchableOpacity>
 
