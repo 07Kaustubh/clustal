@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { ImageBackground, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { ImageBackground, TextInput, TouchableOpacity, Text, View, Alert } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link, useRouter } from 'expo-router';
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import API_BASE_URL from '@/config';
+import useAuthStore from '@/store/authStore';
 
 const Login = () => {
   const router = useRouter();
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState(['', '', '', '', '', '']); // OTP as an array of 6 digits
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isOtpSubmitted, setIsOtpSubmitted] = useState(false);
   const [gymId, setGymId] = useState('');
 
@@ -34,15 +35,15 @@ const Login = () => {
   };
 
   const handleSubmitOtp = async () => {
-    const otpValue = otp.join(''); // Convert OTP array to string
+    const otpValue = otp.join('');
     if (!otpValue || otpValue.length !== 6) {
       Alert.alert("Error", "Please enter a valid 6-digit OTP.");
       return;
     }
     try {
-      const response = await axios.post(`${API_BASE_URL}/verifyotp`, { mobilenumber: mobileNumber, otp: otpValue });
+      const response = await axios.post(`${API_BASE_URL}/user/verifyuser`, { mobilenumber: mobileNumber, otp: otpValue });
       if (response.data) {
-        await SecureStore.setItemAsync("accessToken", response.data.accessToken);
+        await useAuthStore.getState().login(response.data.data);
         setIsOtpSubmitted(true);
       }
     } catch (error) {
@@ -58,46 +59,43 @@ const Login = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+      <SafeAreaView className="flex-1 bg-background dark:bg-darkBackground">
         <LinearGradient
-                // Background Linear Gradient
-                colors={['#171A26', '#0F1014', '#0A0D18', '#141823', '#1A1A1D' ]}
-                style={styles.background}
-              />
-        <ImageBackground source={require('../assets/images/auth.png')} resizeMode="cover" style={styles.image}>
-          <View style={styles.upperSpace} />
-
-          <View style={styles.formContainer}>
+          colors={['#171A26', '#0F1014', '#0A0D18', '#141823', '#1A1A1D']}
+          className="absolute inset-0"
+        />
+        <ImageBackground source={require('../assets/images/auth.png')} resizeMode="cover" className="flex-1 justify-center items-center">
+          <View className="flex-1" />
+          <View className="w-4/5 py-7 justify-center items-center flex-1">
             {!isOtpSent ? (
               <>
                 <TextInput
-                  style={styles.input}
+                  className="w-full h-12 bg-white/10 border border-white rounded-full mb-5 pl-4 text-white text-lg"
                   placeholder="Mobile Number or Email Address"
                   placeholderTextColor="white"
                   keyboardType="default"
                   value={mobileNumber}
                   onChangeText={setMobileNumber}
                 />
-                <TouchableOpacity style={styles.button} onPress={handleGetOtp}>
-                  <Text style={styles.buttonText}>Get OTP</Text>
+                <TouchableOpacity className="mt-4 w-full h-12 bg-[#FFB303] rounded-full flex justify-center items-center" onPress={handleGetOtp}>
+                  <Text className="text-black text-lg font-bold">Get OTP</Text>
                 </TouchableOpacity>
               </>
             ) : !isOtpSubmitted ? (
-              <View style={styles.otpContainer}>
-                <View style={styles.mobileNumberContainer}>
-                  <Text style={styles.label}>Mobile Number/Email:</Text>
-                  <Text style={styles.mobileNumber}>{mobileNumber}</Text>
+              <View className="w-4/5 py-7 justify-center items-center flex-1">
+                <View className="flex-row justify-between w-full mb-3 gap-6">
+                  <Text className="text-white text-lg">Mobile Number/Email:</Text>
+                  <Text className="text-white text-lg">{mobileNumber}</Text>
                 </View>
-                <TouchableOpacity style={styles.editButton}>
-                  <Text style={styles.editButtonText}>Edit</Text>
+                <TouchableOpacity className="self-end mb-5">
+                  <Text className="text-white text-lg font-bold">Edit</Text>
                 </TouchableOpacity>
 
-                {/* OTP Input Section */}
-                <View style={styles.otpInputContainer}>
+                <View className="flex-row justify-between w-full mb-5 mt-3">
                   {otp.map((digit, index) => (
                     <TextInput
                       key={index}
-                      style={styles.otpInput}
+                      className="w-10 h-10 bg-white/20 bg-opacity-20 border-white border rounded-xl text-center text-black text-md font-bold mx-1"
                       keyboardType="numeric"
                       maxLength={1}
                       value={digit}
@@ -110,28 +108,25 @@ const Login = () => {
                   ))}
                 </View>
 
-                {/* Resend OTP Button */}
-                <TouchableOpacity style={styles.resendButton}>
-                  <Text style={styles.resendButtonText}>Resend OTP</Text>
+                <TouchableOpacity className="self-end mb-5">
+                  <Text className="text-white text-lg font-bold">Resend OTP</Text>
                 </TouchableOpacity>
 
-                {/* Submit OTP Button */}
-                <TouchableOpacity style={styles.submitButton} onPress={handleSubmitOtp}>
-                  <Text style={styles.submitButtonText}>Submit OTP</Text>
+                <TouchableOpacity className="mt-4 w-full h-12 bg-[#FFB303] rounded-full flex justify-center items-center active:scale-95" onPress={handleSubmitOtp}>
+                  <Text className="text-black text-lg font-bold">Submit OTP</Text>
                 </TouchableOpacity>
               </View>
             ) : (
-              // Render Gym ID form
-              <View style={styles.gymReferralFormContainer}>
+              <View className="w-4/5 py-7 justify-center items-center flex-1">
                 <TextInput
-                  style={styles.input}
+                  className="w-full h-12 bg-white bg-opacity-20 border-white border-1 rounded-full mb-5 pl-4 text-white text-lg"
                   placeholder="Registered Gym ID"
                   placeholderTextColor="white"
                   value={gymId}
                   onChangeText={setGymId}
                 />
-                <TouchableOpacity style={styles.button} onPress={handleContinue}>
-                  <Link href='./(home)' style={styles.buttonText}>Continue</Link>
+                <TouchableOpacity className="mt-4 w-full h-12 bg-[#FFB303] rounded-full flex justify-center items-center" onPress={handleContinue}>
+                  <Link href='./(home)' className="text-black text-lg font-bold">Continue</Link>
                 </TouchableOpacity>
               </View>
             )}
@@ -143,137 +138,3 @@ const Login = () => {
 };
 
 export default Login;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  background: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '100%',
-  },
-  image: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '66%',
-  },
-  upperSpace: {
-    flex: 1,
-  },
-  formContainer: {
-    width: '80%',
-    paddingVertical: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 0.5,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderColor: 'white',
-    borderWidth: 1,
-    borderRadius: 25,
-    marginBottom: 20,
-    paddingLeft: 15,
-    color: 'white',
-    fontSize: 16,
-  },
-  button: {
-    width: '50%',
-    height: 45,
-    backgroundColor: '#FFB303',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  otpContainer: {
-    width: '80%',
-    paddingVertical: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 0.5,
-  },
-  label: {
-    color: 'white',
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  mobileNumberContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 10,
-  },
-  mobileNumber: {
-    color: 'white',
-    fontSize: 16,
-  },
-  otpInputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 20,
-  },
-  otpInput: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderColor: 'white',
-    borderWidth: 1,
-    borderRadius: 10,
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 24,
-    marginHorizontal: 1,
-  },
-  resendButton: {
-    backgroundColor: 'transparent',
-    marginBottom: 20,
-    alignSelf: 'flex-end',
-  },
-  resendButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  submitButton: {
-    width: '50%',
-    height: 45,
-    backgroundColor: '#FFB303',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-  },
-  submitButtonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  editButton: {
-    backgroundColor: 'transparent',
-    marginBottom: 20,
-    alignSelf: 'flex-end',
-  },
-  editButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  gymReferralFormContainer: {
-    width: '80%',
-    paddingVertical: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 0.5,
-  },
-});

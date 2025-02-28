@@ -41,22 +41,22 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 items-center justify-start bg-gray-900 dark:bg-gray-950">
       <LinearGradient
         colors={['#171A26', '#0A0D18', '#1A1A1D']}
-        style={styles.background}
+        className="absolute inset-0"
       />
 
       {/* Profile Picture in the top right */}
-      <TouchableOpacity onPress={handleProfilePress} style={styles.profileContainer}>
+      <TouchableOpacity onPress={handleProfilePress} className="absolute top-5 right-5 z-10">
         <Image
           source={require('@/assets/images/profile-picture.png')} // Add your profile picture path here
-          style={styles.profileImage}
+          className="w-14 h-14 rounded-full"
         />
       </TouchableOpacity>
 
       {/* Image Carousel in the upper half */}
-      <View style={styles.carouselContainer}>
+      <View className="h-2/3 w-full">
         <PagerView
           style={styles.carousel}
           initialPage={0}
@@ -64,85 +64,79 @@ export default function App() {
           ref={pagerRef} // Attach ref to the PagerView
         >
           {/* First Page with Overlay */}
-          <View style={styles.page} key="1">
+          <View className="justify-center items-center" key="1">
             <Image
               source={require('@/assets/images/carousel1.png')}
-              style={styles.image}
+              className="w-full h-full object-cover"
             />
-            <View style={styles.overlayContainer}>
+            <View className="absolute bottom-10 left-0 right-0 items-center justify-center p-3 rounded-lg">
               <Image
                 source={require('@/assets/images/carousel-icon.png')} // Replace with your PNG
-                style={styles.discountIcon}
+                className="w-24 h-24 object-contain"
               />
-              <Text style={styles.overlayText}>Extra ₹500 Off on All Plans</Text>
+              <Text className="text-white text-md mt-2">Extra ₹500 Off on All Plans</Text>
             </View>
           </View>
 
           {/* Second Page */}
-          <View style={styles.page} key="2">
+          <View className="justify-center items-center" key="2">
             <Image
               source={require('@/assets/images/carousel2.png')}
-              style={styles.image}
+              className="w-full h-full object-cover"
             />
-            <View style={styles.overlayContainer}>
+            <View className="absolute bottom-10 left-0 right-0 items-center justify-center p-3 rounded-lg">
               <Image
                 source={require('@/assets/images/carousel-icon2.png')} // Replace with your PNG
                 style={styles.discountIcon}
               />
-              <Text style={styles.overlayText}>Availible on All Plans</Text>
+              <Text className="text-white text-sm mt-2">Availible on All Plans</Text>
             </View>
           </View>
         </PagerView>
       </View>
 
       {/* Navigation Buttons */}
-      <View style={styles.navButtonContainer}>
+      <View className="flex-row justify-center gap-2 ">
         <TouchableOpacity
-          style={[
-            styles.navButton,
-            activePage === 0 ? styles.navButtonActive : styles.navButtonInactive,
-          ]}
+          className={`w-6 h-2.5 rounded-full border-2 border-yellow-500 ${activePage === 0 ? 'bg-yellow-500' : 'bg-transparent'}`}
           onPress={() => handleButtonPress(0)} // Navigate to page 0
         />
         <TouchableOpacity
-          style={[
-            styles.navButton,
-            activePage === 1 ? styles.navButtonActive : styles.navButtonInactive,
-          ]}
+          className={`w-6 h-2.5 rounded-full border-2 border-yellow-500 ${activePage === 1 ? 'bg-yellow-500' : 'bg-transparent'}`}
           onPress={() => handleButtonPress(1)} // Navigate to page 1
         />
       </View>
 
       {/* Content below the carousel */}
-      <View style={styles.contentContainer}>
+      <View className="flex-1 w-full justify-between p-4">
         {/* Row 1: Hi username! */}
-        <View style={styles.row}>
-          <Text style={styles.greetingText}>Hi, username!</Text>
+        <View className="flex-1 justify-center items-start">
+          <Text className="text-white text-2xl font-bold ml-3">Hi, username!</Text>
         </View>
 
         {/* Row 2: Buttons */}
-        <View style={styles.row}>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={[styles.button, styles.buttonFirst]}>
+        <View className="flex-1 justify-center items-center w-full">
+          <View className="flex-row justify-center w-full space-x-4">
+            <TouchableOpacity className="items-center justify-center p-5 border border-gray-300 bg-gray-800 rounded-lg mx-1">
               <MaterialCommunityIcons name="autorenew" size={48} color="#FFB303" />
-              <Text style={styles.buttonText}>Renew Plan</Text>
+              <Text className="text-white text-sm mt-2 font-bold">Renew Plan</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonMiddle]}>
+            <TouchableOpacity className="items-center justify-center p-5 border border-gray-300 bg-gray-800 rounded-lg mx-1">
               <FontAwesome name="history" size={48} color="#FFB303" onPress={handleHistoryPress} />
-              <Text style={styles.buttonText}>Activity History</Text>
+              <Text className="text-white text-sm mt-2 font-bold">Activity History</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.buttonLast]}>
+            <TouchableOpacity className="items-center justify-center p-5 border border-gray-300 bg-gray-800 rounded-lg mx-1">
               <FontAwesome name="shopping-cart" size={48} color="#FFB303" />
-              <Text style={styles.buttonText}>Fitness Shop</Text>
+              <Text className="text-white text-sm mt-2 font-bold">Fitness Shop</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Row 3: Check-In Button */}
-        <View style={styles.row}>
-          <TouchableOpacity style={styles.checkInButton} onPress={handleCheckinPress}>
+        <View className="flex-1 justify-center items-center">
+          <TouchableOpacity className="flex-row items-center bg-yellow-500 py-3 px-5 rounded-full" onPress={handleCheckinPress}>
             <FontAwesome name="qrcode" size={24} color="#000" />
-            <Text style={styles.checkInText}>Check-In</Text>
+            <Text className="text-black text-xl ml-2 font-bold">Check-In</Text>
           </TouchableOpacity>
         </View>
 
@@ -154,8 +148,8 @@ export default function App() {
         visible={isCheckInModalVisible}
         onRequestClose={handleCloseModal}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <View className="flex-1 justify-end items-center bg-gray-500">
+          <View className="w-full h-1/2 bg-gray-800 rounded-t-lg p-5">
             <CheckInModal closeModal={handleCloseModal} />
           </View>
         </View>
@@ -166,160 +160,12 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  background: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    height: '100%',
-  },
-  profileContainer: {
-    position: 'absolute',
-    top: 20, // Adjust top positioning based on preference
-    right: 20, // Position at the top right
-    zIndex: 10,
-  },
-  profileImage: {
-    width: 60, // Image width
-    height: 60, // Image height
-    borderRadius: 30, // Round the image
-  },
-  carouselContainer: {
-    height: '66%', // Set height for the upper part of the screen (1)
-    width: '100%',
-  },
   carousel: {
     flex: 1,
-  },
-  page: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  overlayContainer: {
-    position: 'absolute',
-    bottom: '10%', // Position the container below the middle of the image
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-    borderRadius: 5,
   },
   discountIcon: {
     width: 100,
     height: 100,
     resizeMode: 'contain',
-  },
-  overlayText: {
-    color: '#FFF',
-    fontSize: 14,
-    marginTop: 10,
-  },
-  navButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 10, // Adds a gap between the navigation buttons
-  },
-  navButton: {
-    width: 25, // Width of the button
-    height: 10, // Height of the button
-    borderRadius: 20, // Makes the button pill-shaped
-    borderWidth: 1, // Border thickness
-    borderColor: '#FFB303', // Border color (yellow)
-  },
-  navButtonActive: {
-    backgroundColor: '#FFB303', // Active button background color
-  },
-  navButtonInactive: {
-    backgroundColor: 'transparent', // Inactive button is transparent
-  },
-  contentContainer: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'space-between', // Space out rows evenly
-    padding: 10,
-  },
-  row: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  greetingText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
-    marginLeft: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    borderWidth: 1, // Border width for separation
-    borderColor: '#D3D3D3', // Light grey border color
-    backgroundColor: '#2C2C2C', // Grey background
-    borderRadius: 5,
-  },
-  buttonFirst: {
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5, // Rounded left corners for the first button
-  },
-  buttonMiddle: {
-    borderLeftWidth: 0, // Remove left border to connect with the first button
-    borderRightWidth: 0, // Remove right border to connect with the last button
-  },
-  buttonLast: {
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5, // Rounded right corners for the last button
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 14,
-    marginTop: 10,
-    fontWeight: 'bold',
-  },
-  checkInButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFB303',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-  },
-  checkInText: {
-    color: '#000',
-    fontSize: 24,
-    marginLeft: 10,
-    fontWeight: 'bold',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end', // Ensures the modal is at the bottom
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add a slight dark overlay
-  },
-  modalContainer: {
-    width: '100%',
-    height: '50%', // Set to whatever height you want for the drawer (adjust as needed)
-    backgroundColor: '#2C2C2C', // Background color for the modal
-    borderTopLeftRadius: 20, // Rounded corners for the top
-    borderTopRightRadius: 20, // Rounded corners for the top
-    padding: 20,
   },
 });
